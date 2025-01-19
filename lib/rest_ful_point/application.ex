@@ -5,19 +5,24 @@ defmodule RestFulPoint.Application do
 
   use Application
 
+  alias Phoenix.PubSub
+  alias RestFulPointWeb.Endpoint
+  alias RestFulPointWeb.Repo
+  alias RestFulPointWeb.Telemetry
+
   @impl true
   def start(_type, _args) do
     children = [
-      RestFulPointWeb.Telemetry,
-      RestFulPoint.Repo,
+      Telemetry,
+      Repo,
       {DNSCluster, query: Application.get_env(:rest_ful_point, :dns_cluster_query) || :ignore},
-      {Phoenix.PubSub, name: RestFulPoint.PubSub},
+      {PubSub, name: RestFulPoint.PubSub},
       # Start the Finch HTTP client for sending emails
       {Finch, name: RestFulPoint.Finch},
       # Start a worker by calling: RestFulPoint.Worker.start_link(arg)
       # {RestFulPoint.Worker, arg},
       # Start to serve requests, typically the last entry
-      RestFulPointWeb.Endpoint
+      Endpoint
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
@@ -30,7 +35,7 @@ defmodule RestFulPoint.Application do
   # whenever the application is updated.
   @impl true
   def config_change(changed, _new, removed) do
-    RestFulPointWeb.Endpoint.config_change(changed, removed)
+    Endpoint.config_change(changed, removed)
     :ok
   end
 end

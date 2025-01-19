@@ -1,4 +1,6 @@
 defmodule RestFulPoint.MixProject do
+  @moduledoc false
+
   use Mix.Project
 
   def project do
@@ -51,8 +53,11 @@ defmodule RestFulPoint.MixProject do
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
       # dev, test
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
       {:styler, "~> 1.0", only: [:dev, :test], runtime: false},
       {:tailwind, "~> 0.2", runtime: Mix.env() == :dev}
     ]
@@ -69,6 +74,15 @@ defmodule RestFulPoint.MixProject do
       setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
+      quality: [
+        "format",
+        "credo_",
+        "sobelow_",
+        "dialyxir_"
+      ],
+      credo_: "credo list --all -a",
+      sobelow_: "sobelow --skip --verbose --exit high",
+      dialyxir_: "dialyzer --format dialyxir",
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["tailwind rest_ful_point", "esbuild rest_ful_point"],
