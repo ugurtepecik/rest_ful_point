@@ -80,7 +80,7 @@ defmodule RestFulPoint.MixProject do
         "sobelow_",
         "dialyxir_"
       ],
-      credo_: "credo list --all -a",
+      credo_: "credo list --all -a --strict",
       sobelow_: "sobelow --skip --verbose --exit high",
       dialyxir_: "dialyzer --format dialyxir",
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
