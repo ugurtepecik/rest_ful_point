@@ -6,8 +6,8 @@ defmodule RestFulPoint.Application do
   use Application
 
   alias Phoenix.PubSub
+  alias RestFulPoint.Repo
   alias RestFulPointWeb.Endpoint
-  alias RestFulPointWeb.Repo
   alias RestFulPointWeb.Telemetry
 
   @impl true

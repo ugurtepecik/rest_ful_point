@@ -11,7 +11,8 @@ import Config
 config :esbuild,
   version: "0.17.11",
   rest_ful_point: [
-    args: ~w(js/app.ts --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
+    args:
+      ~w(js/app.ts --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
     cd: Path.expand("../assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
@@ -32,6 +33,9 @@ config :phoenix, :json_library, Jason
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
 config :rest_ful_point, RestFulPoint.Mailer, adapter: Swoosh.Adapters.Local
+
+# Configures the database
+config :rest_ful_point, RestFulPoint.Repo, migration_primary_key: [type: :uuid]
 
 # Configures the endpoint
 config :rest_ful_point, RestFulPointWeb.Endpoint,
