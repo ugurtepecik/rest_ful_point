@@ -1,4 +1,4 @@
-defmodule BaseModel do
+defmodule BaseSchema do
   @moduledoc false
 
   defmacro __using__(opts) do
@@ -13,6 +13,9 @@ defmodule BaseModel do
       import Ecto.Changeset
 
       alias Ecto.Changeset
+
+      @primary_key {:id, :binary_id, autogenerate: true}
+      @foreign_key_type :binary_id
 
       @required_fields unquote(required_fields)
       @optional_fields unquote(optional_fields)

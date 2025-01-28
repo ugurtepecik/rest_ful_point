@@ -126,4 +126,50 @@ defmodule RestFulPoint.Shareds.MigrationHelpers do
       "#{unquote(table_name)}_soft_delete_function"
     end
   end
+
+  defmacro create_enum(enum_name, enums, schema \\ :public) do
+    quote do
+      enum_name = unquote(enum_name)
+      enums = unquote(enums)
+      schema = unquote(schema)
+
+      enums = Enum.map_join(enums, ", ", &"'#{&1}'")
+
+      execute """
+      DO $$
+      BEGIN
+      IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = '#{enum_name}' or typname = '#{schema}.#{enum_name}') THEN
+          CREATE TYPE #{schema}.#{enum_name} AS ENUM (#{enums});
+        END IF;
+      END$$;
+      """
+    end
+  end
+
+  defmacro add_enum(enum_name, enum, schema \\ :public) do
+    quote do
+      enum_name = "#{unquote(schema)}.#{unquote(enum_name)}"
+      enum = unquote(enum)
+
+      execute "ALTER TYPE #{enum_name} add value IF NOT EXISTS '#{enum}'"
+    end
+  end
+
+  defmacro alter_enum(table_name, enum_name, enums, schema \\ :public) do
+    quote do
+      schema = unquote(schema)
+      table_name = "#{schema}.#{unquote(table_name)}"
+      enum_name = "#{schema}.#{unquote(enum_name)}"
+      enums = unquote(enums)
+
+      enums = Enum.map_join(enums, ", ", &"'#{&1}'")
+
+      execute "CREATE TYPE #{enum_name}_temp AS ENUM (#{enums})"
+
+      execute "ALTER TABLE #{table_name} ALTER COLUMN type TYPE #{enum_name} USING (type::text::#{enum_name}_temp)"
+
+      execute "DROP TYPE #{enum_name}"
+      execute "ALTER TYPE #{enum_name}_temp RENAME TO #{enum_name}"
+    end
+  end
 end

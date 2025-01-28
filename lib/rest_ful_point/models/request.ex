@@ -1,16 +1,24 @@
 defmodule RestFulPoint.Models.Request do
   @moduledoc false
 
-  use BaseModel,
-    required_fields: ~w(name)a,
-    optional_fields: ~w(collection_id folder_id deleted_at)a
+  use BaseSchema,
+    required_fields: ~w(name method url)a,
+    optional_fields: ~w(collection_id folder_id headers query_params path_params body deleted_at)a
 
   alias RestFulPoint.Models.Collection
   alias RestFulPoint.Models.Folder
 
-  typed_schema "collections" do
+  @derive {Jason.Encoder, only: @fields -- [:deleted_at]}
+
+  typed_schema "requests" do
     field :name, :string
     field :deleted_at, :utc_datetime_usec
+    field :method, MethodEnum
+    field :url, :string
+    field :headers, :map
+    field :query_params, :map
+    field :path_params, :map
+    field :body, :map
 
     belongs_to :collection, Collection
     belongs_to :folder, Folder
@@ -30,8 +38,9 @@ defmodule RestFulPoint.Models.Request do
   end
 
   @spec create(map()) :: Ecto.Changeset.t()
-  def create(model), do: BaseModel.create(model)
+  def create(model), do: BaseSchema.create(model)
 
+  @spec validate_collection_or_folder(Changeset.t()) :: Changeset.t()
   defp validate_collection_or_folder(changeset) do
     collection_id = get_field(changeset, :collection_id)
     folder_id = get_field(changeset, :folder_id)

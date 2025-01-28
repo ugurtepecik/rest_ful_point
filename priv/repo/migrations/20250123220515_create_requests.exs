@@ -3,24 +3,25 @@ defmodule RestFulPoint.Repo.Migrations.CreateRequests do
 
   use Ecto.Migration
 
-  import RestFulPoint.Shareds.MigrationHelpers,
-    only: [
-      add_soft_delete_and_timestamps: 0,
-      drop_functions: 1,
-      drop_soft_delete_trigger: 1,
-      get_soft_delete_trigger_name: 1,
-      get_soft_delete_wrapper_function_name: 1,
-      upsert_soft_delete_trigger_function: 3,
-      upsert_soft_delete_trigger: 2
-    ]
+  import RestFulPoint.Shareds.MigrationHelpers
 
   @table :requests
 
   def up do
+    enums = [:delete, :get, :head, :options, :patch, :post, :put]
+
+    create_enum(:method_enum, enums)
+
     create table(@table) do
       add :name, :string, size: 256, null: false
       add :collection_id, references(:collections, type: :binary_id), null: true
       add :folder_id, references(:folders, type: :binary_id), null: true
+      add :method, MethodEnum.type(), null: false
+      add :url, :string, null: true
+      add :headers, :map, null: true
+      add :query_params, :map, null: true
+      add :path_params, :map, null: true
+      add :body, :map, null: true
 
       add_soft_delete_and_timestamps()
     end
@@ -53,5 +54,7 @@ defmodule RestFulPoint.Repo.Migrations.CreateRequests do
     drop_functions([:propagate_request_deleted_at])
 
     drop table(@table)
+
+    MethodEnum.drop_type()
   end
 end

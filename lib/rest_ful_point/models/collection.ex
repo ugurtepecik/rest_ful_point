@@ -1,9 +1,11 @@
 defmodule RestFulPoint.Models.Collection do
   @moduledoc false
 
-  use BaseModel,
+  use BaseSchema,
     required_fields: ~w(name)a,
     optional_fields: ~w(deleted_at)a
+
+  @derive {Jason.Encoder, only: @fields -- [:deleted_at]}
 
   typed_schema "collections" do
     field :name, :string
@@ -18,5 +20,5 @@ defmodule RestFulPoint.Models.Collection do
   end
 
   @spec create(map()) :: Ecto.Changeset.t()
-  def create(model), do: BaseModel.create(model)
+  def create(model), do: BaseSchema.create(model)
 end

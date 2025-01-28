@@ -1,13 +1,15 @@
 defmodule RestFulPoint.Models.Folder do
   @moduledoc false
 
-  use BaseModel,
+  use BaseSchema,
     required_fields: ~w(name)a,
     optional_fields: ~w(collection_id base_folder_id deleted_at)a
 
   alias RestFulPoint.Models.Collection
 
-  typed_schema "collections" do
+  @derive {Jason.Encoder, only: @fields -- [:deleted_at]}
+
+  typed_schema "folders" do
     field :name, :string
     field :deleted_at, :utc_datetime_usec
 
@@ -29,8 +31,9 @@ defmodule RestFulPoint.Models.Folder do
   end
 
   @spec create(map()) :: Ecto.Changeset.t()
-  def create(model), do: BaseModel.create(model)
+  def create(model), do: BaseSchema.create(model)
 
+  @spec validate_collection_or_base_folder(Changeset.t()) :: Changeset.t()
   defp validate_collection_or_base_folder(changeset) do
     collection_id = get_field(changeset, :collection_id)
     base_folder_id = get_field(changeset, :base_folder_id)

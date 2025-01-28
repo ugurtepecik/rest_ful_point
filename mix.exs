@@ -36,6 +36,7 @@ defmodule RestFulPoint.MixProject do
     [
       {:bandit, "~> 1.5"},
       {:dns_cluster, "~> 0.1.1"},
+      {:ecto_enum, "~> 1.4"},
       {:ecto_sql, "~> 3.10"},
       {:finch, "~> 0.19"},
       {:floki, ">= 0.30.0", only: :test},
