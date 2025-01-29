@@ -3,7 +3,8 @@ defmodule RestFulPoint.Models.Collection do
 
   use BaseSchema,
     required_fields: ~w(name)a,
-    optional_fields: ~w(deleted_at)a
+    optional_fields: ~w(deleted_at)a,
+    updateable_fields: ~w(name)
 
   @derive {Jason.Encoder, only: @fields -- [:deleted_at]}
 

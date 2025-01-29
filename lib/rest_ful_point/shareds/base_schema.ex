@@ -29,7 +29,7 @@ defmodule BaseSchema do
         |> validate_required(@required_fields)
       end
 
-      @spec update(model :: Changeset.t(), changes :: map()) :: Changeset.t()
+      @spec update(model :: __MODULE__.t(), changes :: map()) :: Changeset.t()
       def update(model, changes), do: changeset(model, changes)
 
       @spec updateable_fields(type :: :atom | :string) :: list()
